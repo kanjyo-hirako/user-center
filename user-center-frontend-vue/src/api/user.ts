@@ -71,7 +71,7 @@ export const deleteUser = async (id: string) => {
   return myAxios.request({
     url: "/user/delete",
     method: "POST",
-    data: { id },
+    data: id,
     headers: {
       "Content-Type": "application/json",
     },

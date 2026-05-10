@@ -9,7 +9,7 @@
       </a-col>
       <a-col flex="auto">
         <a-menu
-          v-model:selectedKeys="current"
+          :selectedKeys="current"
           mode="horizontal"
           :items="items"
           @click="doMenuClick"
@@ -28,11 +28,18 @@
 import { h, ref } from "vue";
 import { CrownOutlined, HomeOutlined } from "@ant-design/icons-vue";
 import { MenuProps } from "ant-design-vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
 const doMenuClick = ({ key }: { key: string }) => {
+  if (key === "others") {
+    const currentPath = route.path;
+    window.open("https://github.com/kanjyo-hirako", "_blank");
+    current.value = [currentPath];
+    return;
+  }
   router.push({
     path: key,
   });
