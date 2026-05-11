@@ -3,6 +3,7 @@ package com.yupi.usercenter.service;
 // [编程学习交流圈](https://www.code-nav.cn/) 连接万名编程爱好者，一起优秀！20000+ 小伙伴交流分享、40+ 大厂嘉宾一对一答疑、100+ 各方向编程交流群、4000+ 编程问答参考
 
 import com.yupi.usercenter.model.domain.User;
+import com.yupi.usercenter.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,21 +22,26 @@ public class UserServiceTest {
     @Resource
     private UserService userService;
 
+    private User buildTestUser(String suffix) {
+        User user = new User();
+        user.setUsername("testUser_" + suffix);
+        user.setUserAccount("acct_" + suffix);
+        user.setAvatarUrl("https://example.com/avatar.png");
+        user.setGender(0);
+        user.setUserPassword("12345678");
+        user.setPhone("12345678901");
+        user.setEmail("test_" + suffix + "@example.com");
+        return user;
+    }
+
     /**
      * 测试添加用户
      */
     @Test
     public void testAddUser() {
-        User user = new User();
-        user.setUsername("dogYupi");
-        user.setUserAccount("123");
-        user.setAvatarUrl("https://636f-codenav-8grj8px727565176-1256524210.tcb.qcloud.la/img/logo.png");
-        user.setGender(0);
-        user.setUserPassword("xxx");
-        user.setPhone("123");
-        user.setEmail("456");
+        User user = buildTestUser(String.valueOf(System.currentTimeMillis()));
         boolean result = userService.save(user);
-        System.out.println(user.getId());
+        Assertions.assertNotNull(user.getId());
         Assertions.assertTrue(result);
     }
 
@@ -46,15 +52,10 @@ public class UserServiceTest {
      */
     @Test
     public void testUpdateUser() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("dogYupi");
-        user.setUserAccount("123");
-        user.setAvatarUrl("https://636f-codenav-8grj8px727565176-1256524210.tcb.qcloud.la/img/logo.png");
-        user.setGender(0);
-        user.setUserPassword("xxx");
-        user.setPhone("123");
-        user.setEmail("456");
+        String suffix = String.valueOf(System.currentTimeMillis());
+        User user = buildTestUser(suffix);
+        Assertions.assertTrue(userService.save(user));
+        user.setUsername("updated_" + suffix);
         boolean result = userService.updateById(user);
         Assertions.assertTrue(result);
     }
@@ -64,7 +65,9 @@ public class UserServiceTest {
      */
     @Test
     public void testDeleteUser() {
-        boolean result = userService.removeById(1L);
+        User user = buildTestUser(String.valueOf(System.currentTimeMillis()));
+        Assertions.assertTrue(userService.save(user));
+        boolean result = userService.removeById(user.getId());
         Assertions.assertTrue(result);
     }
 
@@ -75,7 +78,9 @@ public class UserServiceTest {
      */
     @Test
     public void testGetUser() {
-        User user = userService.getById(1L);
+        User created = buildTestUser(String.valueOf(System.currentTimeMillis()));
+        Assertions.assertTrue(userService.save(created));
+        User user = userService.getById(created.getId());
         Assertions.assertNotNull(user);
     }
 
@@ -84,32 +89,28 @@ public class UserServiceTest {
      */
     @Test
     void userRegister() {
-        String userAccount = "yupi";
-        String userPassword = "";
-        String checkPassword = "123456";
-        String planetCode = "1";
-        long result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
+        Assertions.assertThrows(BusinessException.class, () ->
+                userService.userRegister("yupi", "", "123456", "testUser"));
+        Assertions.assertThrows(BusinessException.class, () ->
+                userService.userRegister("yu", "", "123456", "testUser"));
+        Assertions.assertThrows(BusinessException.class, () ->
+                userService.userRegister("yupi", "123456", "123456", "testUser"));
+
+        Assertions.assertThrows(BusinessException.class, () ->
+                userService.userRegister("yu pi", "12345678", "123456", "testUser"));
+        long result = userService.userRegister("yu pi", "12345678", "123456789", "testUser");
         Assertions.assertEquals(-1, result);
-        userAccount = "yu";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
-        userAccount = "yupi";
-        userPassword = "123456";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
-        userAccount = "yu pi";
-        userPassword = "12345678";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
-        checkPassword = "123456789";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
-        userAccount = "dogYupi";
-        checkPassword = "12345678";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
-        userAccount = "yupi";
-        result = userService.userRegister(userAccount, userPassword, checkPassword, planetCode);
-        Assertions.assertEquals(-1, result);
+
+        String suffix = String.valueOf(System.currentTimeMillis());
+        String userAccount = "reg_" + suffix;
+        String userPassword = "12345678";
+        String checkPassword = "12345678";
+        String username = "name_" + suffix;
+        result = userService.userRegister(userAccount, userPassword, checkPassword, username);
+        Assertions.assertTrue(result > 0);
+
+        String duplicateAccount = userAccount;
+        Assertions.assertThrows(BusinessException.class, () ->
+                userService.userRegister(duplicateAccount, userPassword, checkPassword, "another_" + suffix));
     }
 }

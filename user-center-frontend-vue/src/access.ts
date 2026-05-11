@@ -10,6 +10,15 @@ router.beforeEach(async (to, from, next) => {
   const loginUserStore = useLoginUserStore();
   const toUrl = to.fullPath;
 
+  // 已登录用户访问登录/注册页，重定向到首页
+  if (
+    (toUrl === "/user/login" || toUrl === "/user/register") &&
+    loginUserStore.loginUser?.id
+  ) {
+    next("/");
+    return;
+  }
+
   if (toUrl.startsWith("/admin")) {
     let loginUser = loginUserStore.loginUser;
 
@@ -27,7 +36,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (!loginUser || !loginUser.id) {
-      message.error("Please login first");
+      message.error("请先登录");
       next(`/user/login?redirect=${to.fullPath}`);
       return;
     }

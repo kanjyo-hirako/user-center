@@ -77,3 +77,19 @@ export const deleteUser = async (id: string) => {
     },
   });
 };
+
+/**
+ * 上传头像
+ * @param file
+ * @param userId
+ */
+export const uploadAvatar = async (file: File, userId: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("userId", userId);
+  return myAxios.request({
+    url: "/file/upload",
+    method: "POST",
+    data: formData,
+  });
+};

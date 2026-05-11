@@ -4,7 +4,7 @@
       <a-col class="brand-col" flex="220px">
         <div class="title-bar">
           <img class="logo" src="../assets/logo.png" alt="logo" />
-          <div class="title">User Center</div>
+          <div class="title">用户中心</div>
         </div>
       </a-col>
       <a-col flex="auto">
@@ -17,7 +17,18 @@
       </a-col>
       <a-col class="user-col" flex="120px">
         <div class="user-login-status">
-          <a-button type="primary" href="/user/login">Login</a-button>
+          <a-button
+            v-if="route.path === '/' || route.path === '/user/register'"
+            type="primary"
+            href="/user/login"
+            >登录</a-button
+          >
+          <a-button
+            v-else-if="route.path.startsWith('/admin')"
+            danger
+            @click="doLogout"
+            >退出登录</a-button
+          >
         </div>
       </a-col>
     </a-row>
@@ -27,11 +38,25 @@
 <script lang="ts" setup>
 import { h, ref } from "vue";
 import { CrownOutlined, HomeOutlined } from "@ant-design/icons-vue";
-import { MenuProps } from "ant-design-vue";
+import { MenuProps, message } from "ant-design-vue";
 import { useRoute, useRouter } from "vue-router";
+import { userLogout } from "@/api/user";
+import { useLoginUserStore } from "@/store/userLoginUserStore";
 
 const router = useRouter();
 const route = useRoute();
+const loginUserStore = useLoginUserStore();
+
+const doLogout = async () => {
+  try {
+    await userLogout({});
+    loginUserStore.setLoginUser({ userName: "未登录" });
+    message.success("已退出登录");
+    router.push({ path: "/" });
+  } catch {
+    message.error("退出登录失败");
+  }
+};
 
 const doMenuClick = ({ key }: { key: string }) => {
   if (key === "others") {
@@ -45,7 +70,7 @@ const doMenuClick = ({ key }: { key: string }) => {
   });
 };
 
-const current = ref(["home"]);
+const current = ref([route.path]);
 router.afterEach((to) => {
   current.value = [to.path];
 });
@@ -54,33 +79,33 @@ const items = ref<MenuProps["items"]>([
   {
     key: "/",
     icon: () => h(HomeOutlined),
-    label: "Home",
-    title: "Home",
+    label: "首页",
+    title: "首页",
   },
   {
     key: "/user/login",
-    label: "User Login",
-    title: "User Login",
+    label: "用户登录",
+    title: "用户登录",
   },
   {
     key: "/user/register",
-    label: "User Register",
-    title: "User Register",
+    label: "用户注册",
+    title: "用户注册",
   },
   {
     key: "/admin/userManage",
     icon: () => h(CrownOutlined),
-    label: "User Manage",
-    title: "User Manage",
+    label: "用户管理",
+    title: "用户管理",
   },
   {
     key: "others",
     label: h(
       "a",
       { href: "https://github.com/kanjyo-hirako", target: "_blank" },
-      "About"
+      "关于"
     ),
-    title: "About",
+    title: "关于",
   },
 ]);
 </script>

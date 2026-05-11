@@ -2,6 +2,7 @@
   <div id="userRegisterPage">
     <h2 class="title">用户注册</h2>
     <a-form
+      ref="formRef"
       style="max-width: 480px; margin: 0 auto"
       :model="formState"
       name="basic"
@@ -45,6 +46,7 @@
         :rules="[
           { required: true, message: '请输入确认密码!' },
           { min: 8, message: '确认密码长度不能小于8位!' },
+          { validator: validateCheckPassword, trigger: 'change' },
         ]"
       >
         <a-input-password
@@ -54,13 +56,16 @@
       </a-form-item>
 
       <a-form-item
-        label="星球编号"
-        name="planetCode"
-        :rules="[{ required: true, message: '请输入星球编号!' }]"
+        label="用户名"
+        name="username"
+        :rules="[
+          { required: true, message: '请输入用户名!' },
+          { validator: validateUsername, trigger: 'blur' },
+        ]"
       >
         <a-input
-          v-model:value="formState.planetCode"
-          placeholder="请输入星球编号"
+          v-model:value="formState.username"
+          placeholder="请输入用户名"
         />
       </a-form-item>
 
@@ -75,31 +80,55 @@
 import { userRegister } from "@/api/user";
 import { message } from "ant-design-vue";
 import type { AxiosError } from "axios";
-import { reactive } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 interface FormState {
   userAccount: string;
   userPassword: string;
   checkPassword: string;
-  planetCode: string;
+  username: string;
 }
 
 const formState = reactive<FormState>({
   userAccount: "",
   userPassword: "",
   checkPassword: "",
-  planetCode: "",
+  username: "",
 });
 
 const router = useRouter();
+const formRef = ref();
+
+const validateUsername = async (_rule: unknown, value: string) => {
+  if (
+    value &&
+    /[`~!@#$%^&*()+=|{}':;',\\[\].<>/?~！@#￥%……&*（）——+|{}【】'；：""''。，、？]/.test(
+      value
+    )
+  ) {
+    return Promise.reject("用户名不能包含特殊字符");
+  }
+  return Promise.resolve();
+};
+
+const validateCheckPassword = async (_rule: unknown, value: string) => {
+  if (value && value !== formState.userPassword) {
+    return Promise.reject("两次输入的密码不一致");
+  }
+  return Promise.resolve();
+};
+
+watch(
+  () => formState.userPassword,
+  () => {
+    if (formState.checkPassword) {
+      formRef.value?.validateFields(["checkPassword"]);
+    }
+  }
+);
 
 const handleSubmit = async (values: FormState) => {
-  if (formState.userPassword !== formState.checkPassword) {
-    message.error("两次输入的密码不一致");
-    return;
-  }
-
   try {
     const res = await userRegister(values);
     if (res.data?.code === 0) {

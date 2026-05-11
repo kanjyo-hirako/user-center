@@ -31,9 +31,9 @@ public class UserRegisterRequest implements Serializable {
     private String checkPassword;
 
     /**
-     * 星球编号
+     * 用户名
      */
-    private String planetCode;
+    private String username;
 }
 
 // [加入编程导航](https://yupi.icu) 入门捷径+交流答疑+项目实战+求职指导，帮你自学编程不走弯路

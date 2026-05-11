@@ -70,7 +70,7 @@ const textParticles: Particle[] = [];
 const bgParticles: Particle[] = [];
 const particleColors = ["#1e88e5", "#64b5f6", "#42a5f5"];
 const textColor = "#1e88e5";
-const text = "Welcome to\nuser center!";
+const text = "欢迎来到\n用户中心！";
 const mouse = {
   x: null as NullableNumber,
   y: null as NullableNumber,

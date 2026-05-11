@@ -1,6 +1,6 @@
 <template>
   <div id="userLoginPage">
-    <h2 class="title">User Login</h2>
+    <h2 class="title">用户登录</h2>
     <a-form
       style="max-width: 480px; margin: 0 auto"
       :model="formState"
@@ -13,33 +13,33 @@
       @finishFailed="onFinishFailed"
     >
       <a-form-item
-        label="Account"
+        label="账号"
         name="userAccount"
-        :rules="[{ required: true, message: 'Please input account' }]"
+        :rules="[{ required: true, message: '请输入账号' }]"
       >
         <a-input
           v-model:value="formState.userAccount"
-          placeholder="Please input account"
+          placeholder="请输入账号"
         />
       </a-form-item>
 
       <a-form-item
-        label="Password"
+        label="密码"
         name="userPassword"
         validate-trigger="change"
         :rules="[
-          { required: true, message: 'Please input password' },
-          { min: 8, message: 'Password length must be at least 8' },
+          { required: true, message: '请输入密码' },
+          { min: 8, message: '密码长度不能小于8位' },
         ]"
       >
         <a-input-password
           v-model:value="formState.userPassword"
-          placeholder="Please input password"
+          placeholder="请输入密码"
         />
       </a-form-item>
 
       <a-form-item class="submit-item" :wrapper-col="{ span: 24 }">
-        <a-button type="primary" html-type="submit">Login</a-button>
+        <a-button type="primary" html-type="submit">登录</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -72,7 +72,7 @@ const handleSubmit = async (values: FormState) => {
     const res = await userLogin(values);
     if (res.data?.code === 0) {
       await loginUserStore.fetchLoginUser();
-      message.success("Login success");
+      message.success("登录成功");
       const redirect =
         typeof route.query.redirect === "string"
           ? route.query.redirect
@@ -83,7 +83,7 @@ const handleSubmit = async (values: FormState) => {
       });
       return;
     }
-    message.error(`Login failed: ${res.data?.description ?? "Unknown error"}`);
+    message.error(`登录失败：${res.data?.description ?? "未知错误"}`);
   } catch (error) {
     const axiosError = error as AxiosError<{
       description?: string;
@@ -98,12 +98,12 @@ const handleSubmit = async (values: FormState) => {
       axiosError.response?.data?.description ||
       axiosError.response?.data?.message ||
       axiosError.message ||
-      "Request failed";
+      "请求失败";
     if (statusCode === 404) {
-      message.error(`Login failed: API not found (404) ${requestUrl}`);
+      message.error(`登录失败：接口不存在(404) ${requestUrl}`);
       return;
     }
-    message.error(`Login failed: ${errorMsg}`);
+    message.error(`登录失败：${errorMsg}`);
     console.log("userLogin error:", values, error);
   }
 };

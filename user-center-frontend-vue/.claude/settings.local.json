@@ -3,7 +3,12 @@
     "allow": [
       "Bash(curl *)",
       "Bash(npm ls *)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run *)",
+      "Bash(./mvnw compile *)",
+      "Bash(mvn *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vue-tsc *)"
     ]
   }
 }

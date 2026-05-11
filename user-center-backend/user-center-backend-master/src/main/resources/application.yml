@@ -6,13 +6,18 @@ spring:
     name: user-center-backend
   # DataSource Config
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/yupi
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/yupi?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: "83681588"
   # session 失效时间
   session:
     timeout: 86400
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
 server:
   port: 8080
   servlet:

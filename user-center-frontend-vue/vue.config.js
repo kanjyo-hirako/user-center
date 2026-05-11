@@ -9,6 +9,10 @@ module.exports = defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      "/avatars": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
     },
   },
 });
