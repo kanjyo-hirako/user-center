@@ -9,6 +9,18 @@ const myAxios = axios.create({
   withCredentials: true,
 });
 
+export const resolveApiAssetUrl = (path?: string) => {
+  if (!path) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  const apiBaseUrl = myAxios.defaults.baseURL || "";
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return `${apiBaseUrl}/${normalizedPath}`;
+};
+
 // Add a request interceptor
 myAxios.interceptors.request.use(
   function (config) {
@@ -26,10 +38,7 @@ myAxios.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
-    console.log(response);
-
     const { data } = response;
-    console.log(data);
     // 未登录
     if (data.code === 40100) {
       // 不是获取用户信息接口，或者不是登录页面，则跳转到登录页面

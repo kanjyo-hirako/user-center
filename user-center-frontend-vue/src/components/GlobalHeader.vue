@@ -3,7 +3,7 @@
     <a-row :wrap="false" align="middle">
       <a-col class="brand-col" flex="220px">
         <div class="title-bar">
-          <img class="logo" src="../assets/logo.png" alt="logo" />
+          <img class="logo" src="../assets/baka.jpg" alt="logo" />
           <div class="title">用户中心</div>
         </div>
       </a-col>

@@ -26,7 +26,6 @@ export const useLoginUserStore = defineStore("loginUser", () => {
         loginUser.value = res.data.data;
       }
     } catch (error) {
-      console.error("fetchLoginUser failed:", error);
       // Keep default guest state when backend endpoint is unavailable.
       loginUser.value = {
         userName: "未登录",

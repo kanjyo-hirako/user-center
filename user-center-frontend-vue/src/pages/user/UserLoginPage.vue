@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div id="userLoginPage">
     <h2 class="title">用户登录</h2>
     <a-form
@@ -10,7 +10,6 @@
       :wrapper-col="{ span: 20 }"
       autocomplete="off"
       @finish="handleSubmit"
-      @finishFailed="onFinishFailed"
     >
       <a-form-item
         label="账号"
@@ -104,12 +103,7 @@ const handleSubmit = async (values: FormState) => {
       return;
     }
     message.error(`登录失败：${errorMsg}`);
-    console.log("userLogin error:", values, error);
   }
-};
-
-const onFinishFailed = (errorInfo: unknown) => {
-  console.log("Failed:", errorInfo);
 };
 </script>
 

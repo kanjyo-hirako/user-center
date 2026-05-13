@@ -27,7 +27,6 @@ public class UserServiceTest {
         user.setUsername("testUser_" + suffix);
         user.setUserAccount("acct_" + suffix);
         user.setAvatarUrl("https://example.com/avatar.png");
-        user.setGender(0);
         user.setUserPassword("12345678");
         user.setPhone("12345678901");
         user.setEmail("test_" + suffix + "@example.com");

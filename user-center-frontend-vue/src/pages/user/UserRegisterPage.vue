@@ -11,7 +11,6 @@
       :wrapper-col="{ span: 20 }"
       autocomplete="off"
       @finish="handleSubmit"
-      @finishFailed="onFinishFailed"
     >
       <a-form-item
         label="账号"
@@ -161,10 +160,6 @@ const handleSubmit = async (values: FormState) => {
     }
     message.error(`注册失败：${errorMsg}`);
   }
-};
-
-const onFinishFailed = (errorInfo: unknown) => {
-  console.log("Failed:", errorInfo);
 };
 </script>
 
