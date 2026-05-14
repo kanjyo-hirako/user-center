@@ -38,7 +38,9 @@
       </a-form-item>
 
       <a-form-item class="submit-item" :wrapper-col="{ span: 24 }">
-        <a-button type="primary" html-type="submit">登录</a-button>
+        <a-button type="primary" html-type="submit" :loading="loading"
+          >登录</a-button
+        >
       </a-form-item>
     </a-form>
   </div>
@@ -49,7 +51,7 @@ import { userLogin } from "@/api/user";
 import { useLoginUserStore } from "@/store/userLoginUserStore";
 import { message } from "ant-design-vue";
 import type { AxiosError } from "axios";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 interface FormState {
@@ -65,12 +67,15 @@ const formState = reactive<FormState>({
 const router = useRouter();
 const route = useRoute();
 const loginUserStore = useLoginUserStore();
+const loading = ref(false);
 
 const handleSubmit = async (values: FormState) => {
+  if (loading.value) return;
+  loading.value = true;
   try {
     const res = await userLogin(values);
-    if (res.data?.code === 0) {
-      await loginUserStore.fetchLoginUser();
+    if (res.data?.code === 0 && res.data?.data) {
+      loginUserStore.setLoginUser(res.data.data);
       message.success("登录成功");
       const redirect =
         typeof route.query.redirect === "string"
@@ -82,7 +87,8 @@ const handleSubmit = async (values: FormState) => {
       });
       return;
     }
-    message.error(`登录失败：${res.data?.description ?? "未知错误"}`);
+    const errorDesc = res.data?.description ?? res.data?.message ?? "未知错误";
+    message.error(`登录失败：${errorDesc}`);
   } catch (error) {
     const axiosError = error as AxiosError<{
       description?: string;
@@ -103,6 +109,8 @@ const handleSubmit = async (values: FormState) => {
       return;
     }
     message.error(`登录失败：${errorMsg}`);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
