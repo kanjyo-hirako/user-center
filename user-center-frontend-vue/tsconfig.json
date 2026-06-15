@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -13,10 +12,11 @@
     "sourceMap": true,
     "rootDirs": ["./src"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "lib": ["ESNext", "dom", "dom.iterable", "scripthost"],
     "types": ["webpack-env"],
+    "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "isolatedModules": true
